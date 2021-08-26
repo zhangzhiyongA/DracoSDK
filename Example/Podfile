@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '9.0'
+
+target 'DracoSDK_Example' do
+  pod 'DracoSDK', :path => '../'
+
+  target 'DracoSDK_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
