@@ -1,0 +1,4 @@
+framework module DracoSDK {
+  header "DracoSDK-Swift.h"
+  requires objc
+}
