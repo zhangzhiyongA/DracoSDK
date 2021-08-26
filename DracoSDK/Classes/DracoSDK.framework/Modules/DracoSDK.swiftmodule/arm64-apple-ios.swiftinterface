@@ -1,0 +1,251 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.4.2 (swiftlang-1205.0.28.2 clang-1205.0.19.57)
+// swift-module-flags: -target arm64-apple-ios9.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name DracoSDK
+import AVFoundation
+import CFNetwork
+import CommonCrypto
+import CoreLocation
+import CoreMotion
+import CoreTelephony
+import Foundation
+import LocalAuthentication
+import Swift
+import UIKit
+@objc public protocol DracoDecisionDelegate {
+  @objc(dracoAttachedActiveDecisionDidCollectPayloadForView:product:clientToken:sessionId:dataToken:payload:) optional func dracoAttachedActiveDecisionDidCollectPayload(for view: UIKit.UIView, product: Swift.String, clientToken ct: DracoSDK.ClientToken?, sessionId: Swift.String?, dataToken: Swift.String?, payload: Swift.String?)
+  @objc(dracoAttachedDecisionDidCompleteForView:product:clientToken:) optional func dracoAttachedDecisionDidComplete(for view: UIKit.UIView, product: Swift.String, clientToken ct: DracoSDK.ClientToken?)
+  @objc(dracoAttachedDecisionDidFailForView:product:clientToken:error:) optional func dracoAttachedDecisionDidFail(for view: UIKit.UIView, product: Swift.String, clientToken ct: DracoSDK.ClientToken?, error: Swift.Error)
+  @objc(dracoDidAttachDecisionToView:product:clientToken:) optional func dracoDidAttachDecision(to view: UIKit.UIView, product: Swift.String, clientToken ct: DracoSDK.ClientToken?)
+  @objc(dracoDidFailAttachingDecisionToView:product:clientToken:error:) optional func dracoDidFailAttachingDecision(to view: UIKit.UIView, product: Swift.String, clientToken ct: DracoSDK.ClientToken?, error: Swift.Error)
+}
+@objc public enum DracoInspectorState : Swift.Int, Swift.CustomStringConvertible {
+  case INACTIVE
+  case STARTING
+  case READY
+  case WORKING
+  case KILLED
+  public var description: Swift.String {
+    get
+  }
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers @objc public class DracoInspectorStatus : ObjectiveC.NSObject, Foundation.NSCopying {
+  @objc final public let state: DracoSDK.DracoInspectorState
+  @objc override dynamic public var description: Swift.String {
+    @objc get
+  }
+  @objc public func copy(with zone: ObjectiveC.NSZone? = nil) -> Any
+  @objc override dynamic public init()
+  @objc deinit
+}
+public typealias DracoDecisionStatusHandler = (DracoSDK.DracoDecisionStatus) -> Swift.Void
+public typealias DracoMeasurementResult = Swift.Result<DracoSDK.DracoDecisionStatus, DracoSDK.DracoException>
+public typealias DracoMeasurementHandler = (DracoSDK.DracoMeasurementResult) -> Swift.Void
+@objc public protocol DracoProduct {
+  @objc static func decision()
+  @objc(decisionWithClientToken:) static func decision(with clientToken: DracoSDK.ClientToken?)
+  @objc(decisionWithClientToken:statusHandler:) static func decision(with clientToken: DracoSDK.ClientToken?, statusHandler: ((DracoSDK.DracoDecisionStatus) -> Swift.Void)?)
+  @objc(activeDecisionWithClientToken:statusHandler:) static func activeDecision(with clientToken: DracoSDK.ClientToken?, statusHandler: ((DracoSDK.DracoDecisionStatus) -> Swift.Void)?)
+  @objc(attachDecisionToView:) static func attachDecision(to view: UIKit.UIView)
+  @objc(attachDecisionToView:clientToken:) static func attachDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc(attachActiveDecisionToView:clientToken:) static func attachActiveDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc(attachActiveDecisionToView:) static func attachActiveDecision(to view: UIKit.UIView)
+  @objc(detachDecisionFromView:) static func detachDecision(from view: UIKit.UIView)
+  @objc static var isActive: Swift.Bool { get }
+}
+public struct DracoAdsConfiguration {
+  public let campaign: Swift.String
+  public let adsID: Swift.String
+  public let media: DracoSDK.DracoAdsConfiguration.MediaType
+  public let size: DracoSDK.DracoAdsConfiguration.AdSize
+  public let supplierID: Swift.String
+  public let publisherID: Swift.String
+  public let advertiserID: Swift.String
+  public enum MediaType {
+    case banner
+    case video
+    case audio
+    case native
+    case SSAI
+    public static func == (a: DracoSDK.DracoAdsConfiguration.MediaType, b: DracoSDK.DracoAdsConfiguration.MediaType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public struct AdSize {
+    public init(width: Swift.Int, height: Swift.Int)
+    public init(view: UIKit.UIView)
+    public init(size: CoreGraphics.CGSize)
+  }
+  public init(campaign: Swift.String, adsID: Swift.String, media: DracoSDK.DracoAdsConfiguration.MediaType, size: DracoSDK.DracoAdsConfiguration.AdSize, supplierID: Swift.String = "N/A", publisherID: Swift.String = "N/A", advertiserID: Swift.String = "N/A")
+}
+@_inheritsConvenienceInitializers @objc public class DracoApp : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension DracoApp {
+  public static func measure(in view: UIKit.UIView, config: DracoSDK.DracoAppConfiguration, customData: DracoSDK.CustomData? = nil, mitigationHandler: @escaping DracoSDK.DracoMeasurementHandler)
+  public static func measureLogin(in view: UIKit.UIView, customData: DracoSDK.CustomData? = nil, mitigationHandler: @escaping DracoSDK.DracoMeasurementHandler)
+}
+extension DracoApp : DracoSDK.DracoProduct {
+  @objc public static func attachDecision(to view: UIKit.UIView)
+  @objc public static func attachDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func detachDecision(from view: UIKit.UIView)
+  @objc public static func decision()
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?)
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static func activeDecision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static var isActive: Swift.Bool {
+    @objc get
+  }
+}
+public enum DracoException : Swift.Error {
+  case unableToCompleteMeasurament(description: Swift.String, clientToken: DracoSDK.ClientToken)
+  case unexpectedPayload(clientToken: DracoSDK.ClientToken)
+  case failedToAttach(view: UIKit.UIView, product: Swift.String, clientToken: DracoSDK.ClientToken, error: Swift.Error)
+}
+extension DracoException : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension DracoException : Foundation.LocalizedError {
+}
+@_inheritsConvenienceInitializers @objc public class DracoAds : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension DracoAds {
+  public static func measureImpression(_ config: DracoSDK.DracoAdsConfiguration, customData: DracoSDK.CustomData? = nil, measurementHandler: DracoSDK.DracoMeasurementHandler? = nil)
+  public static func measureOnInteraction(in view: UIKit.UIView, config: DracoSDK.DracoAdsConfiguration, customData: DracoSDK.CustomData? = nil, measurementHandler: DracoSDK.DracoMeasurementHandler? = nil)
+  public static func measureInteraction(config: DracoSDK.DracoAdsConfiguration, customData: DracoSDK.CustomData? = nil, measurementHandler: DracoSDK.DracoMeasurementHandler? = nil)
+}
+extension DracoAds : DracoSDK.DracoProduct {
+  @objc public static func attachDecision(to view: UIKit.UIView)
+  @objc public static func attachDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func detachDecision(from view: UIKit.UIView)
+  @objc public static func decision()
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?)
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static func activeDecision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static var isActive: Swift.Bool {
+    @objc get
+  }
+}
+public struct DracoMktConfiguration {
+  public init(campaign: Swift.String, supplierID: Swift.String = "N/A", publisherID: Swift.String = "N/A")
+}
+@objc public enum DracoDecisionState : Swift.Int {
+  case COMPLETE
+  case ERROR
+  case PAYLOAD_COLLECTED
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_inheritsConvenienceInitializers @objc public class DracoMkt : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension DracoMkt {
+  public static func measurePageView(name: Swift.String, config: DracoSDK.DracoMktConfiguration, customData: DracoSDK.CustomData? = nil, measurementHandler: DracoSDK.DracoMeasurementHandler? = nil)
+  public static func measurePageView(in viewController: UIKit.UIViewController, config: DracoSDK.DracoMktConfiguration, customData: DracoSDK.CustomData? = nil, measurementHandler: DracoSDK.DracoMeasurementHandler? = nil)
+}
+extension DracoMkt : DracoSDK.DracoProduct {
+  @objc public static func attachDecision(to view: UIKit.UIView)
+  @objc public static func attachDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView)
+  @objc public static func attachActiveDecision(to view: UIKit.UIView, clientToken ct: DracoSDK.ClientToken?)
+  @objc public static func detachDecision(from view: UIKit.UIView)
+  @objc public static func decision()
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?)
+  @objc public static func decision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static func activeDecision(with clientToken: DracoSDK.ClientToken?, statusHandler: DracoSDK.DracoDecisionStatusHandler?)
+  @objc public static var isActive: Swift.Bool {
+    @objc get
+  }
+}
+@_hasMissingDesignatedInitializers public class DracoProductImplementation {
+  @objc deinit
+}
+public typealias DracoInitializationStatusHandler = (DracoSDK.DracoInspectorStatus) -> ()
+@objc public protocol DracoProtocol {
+  @objc static var status: DracoSDK.DracoInspectorStatus { get }
+  @objc static var delegate: DracoSDK.DracoDecisionDelegate? { get set }
+  @objc static func start(withClientId clientId: Swift.String, statusHandler: DracoSDK.DracoInitializationStatusHandler?)
+  @objc static func kill()
+  @objc static func getVersion() -> Swift.String
+  @objc static func startEventInspector()
+  @objc static func killEventInspector()
+  @objc static func trackViews(_ views: [UIKit.UIView])
+  @objc static func trackViewsWithIdentifiers(_ views: [Swift.String : UIKit.UIView])
+  @objc static func trackView(_ view: UIKit.UIView, identifier: Swift.String)
+  @objc static func trackView(_ view: UIKit.UIView)
+}
+@objc extension Draco {
+  @objc public static func start(withClientId clientId: Swift.String)
+}
+@_inheritsConvenienceInitializers @objc public class Draco : ObjectiveC.NSObject, DracoSDK.DracoProtocol {
+  @objc public static func getVersion() -> Swift.String
+  @objc public static var status: DracoSDK.DracoInspectorStatus {
+    @objc get
+  }
+  @objc public static var delegate: DracoSDK.DracoDecisionDelegate?
+  @objc public class func start(withClientId clientId: Swift.String, statusHandler: DracoSDK.DracoInitializationStatusHandler?)
+  @objc public static func kill()
+  @objc public static func startEventInspector()
+  @objc public static func killEventInspector()
+  @objc public static func trackViews(_ views: [UIKit.UIView])
+  @objc public static func trackViewsWithIdentifiers(_ views: [Swift.String : UIKit.UIView])
+  @objc public static func trackView(_ view: UIKit.UIView, identifier: Swift.String)
+  @objc public static func trackView(_ view: UIKit.UIView)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct DracoAppConfiguration {
+  public enum ActionType {
+    case undefined
+    case accountLogin
+    case accountCreation
+    case passwordReset
+    case passwordUpdate
+    case profileUpdate
+    case reputationClick
+    case Spin
+    case paymentOrTransaction
+    case genericFormFill
+    case genericButtonClick
+    public static func == (a: DracoSDK.DracoAppConfiguration.ActionType, b: DracoSDK.DracoAppConfiguration.ActionType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public init(action: DracoSDK.DracoAppConfiguration.ActionType)
+}
+public typealias ClientToken = [Swift.String : Any]
+public typealias CustomData = [Swift.String : Swift.String]
+@_hasMissingDesignatedInitializers @objc public class DracoDecisionStatus : ObjectiveC.NSObject {
+  @objc final public let state: DracoSDK.DracoDecisionState
+  @objc final public let product: Swift.String
+  @objc final public let sessionId: Swift.String?
+  @objc final public let dataToken: Swift.String?
+  @objc final public let payload: Swift.String?
+  @objc final public let clientToken: DracoSDK.ClientToken?
+  @objc override dynamic public var description: Swift.String {
+    @objc get
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
